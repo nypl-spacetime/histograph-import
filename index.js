@@ -45,9 +45,7 @@ fs.readdir(config.data, function(err, directories){
                     }
                   }
 
-                  // ASYNC DOES NOT WORK!!! fix!
                   callback();
-
                 });
               } else {
                 console.log("Warning, file not found: ".yellow + base);
