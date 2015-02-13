@@ -22,7 +22,7 @@ fs.readdir(config.data, function(err, directories){
 
             fs.exists(filePath, function (exists) {
               if (exists) {
-                var url = 'data/' + layer + "/" + base.replace(layer + ".", "");
+                var url = 'layers/' + layer + "/" + base.replace(layer + ".", "");
                     formData = {file: fs.createReadStream(filePath)};
 
                 request.post(config.io + url, {formData: formData}, function optionalCallback(err, res, body) {
@@ -48,7 +48,7 @@ fs.readdir(config.data, function(err, directories){
                   callback();
                 });
               } else {
-                console.log("Warning, file not found: ".yellow + base);
+                console.log("File not found: ".yellow + base);
                 callback();
               }
             });
