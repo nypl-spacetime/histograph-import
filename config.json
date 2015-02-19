@@ -1,4 +1,4 @@
 {
   "io": "http://localhost:8080/",
-  "data": "../historische-geocoder/data"
+  "data": "../../erfgoed-en-locatie/historische-geocoder/data"
 }
