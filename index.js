@@ -1,5 +1,5 @@
 var fs = require('fs'),
-    config = require('./config.json'),
+    config = require(process.env.HISTOGRAPH_CONFIG),
     path = require('path'),
     request = require('request'),
     async = require('async'),
@@ -9,15 +9,15 @@ var fs = require('fs'),
       'relations'
     ];
 
-fs.readdir(config.data, function(err, directories){
+fs.readdir(config.data.dir, function(err, directories){
   async.eachSeries(files, function(file, callback) {
     async.eachSeries(directories, function(dir, callback) {
       if (dir != '.') {
-        fs.stat(config.data + "/" + dir, function (err, stat) {
+        fs.stat(config.data.dir + "/" + dir, function (err, stat) {
           if (stat.isDirectory()) {
             var layer = dir;
 
-              var filePath = config.data + "/" + dir + '/' + dir + '.' + file + '.ndjson',
+              var filePath = config.data.dir + "/" + dir + '/' + dir + '.' + file + '.ndjson',
                   base = path.basename(filePath);
 
               fs.exists(filePath, function (exists) {
@@ -25,7 +25,7 @@ fs.readdir(config.data, function(err, directories){
                   var url = 'layers/' + layer + "/" + base.replace(layer + ".", "");
                       formData = {file: fs.createReadStream(filePath)};
 
-                  request.post(config.io + url, {formData: formData}, function optionalCallback(err, res, body) {
+                  request.post("http://" + config.io.host + ":" + config.io.port + "/" + url, {formData: formData}, function optionalCallback(err, res, body) {
                     if (err) {
                       console.error('Upload failed: '.red + base);
                       console.error("\t" + err.code);
