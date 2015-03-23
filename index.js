@@ -15,14 +15,14 @@ fs.readdir(config.data.dir, function(err, directories){
       if (dir != '.') {
         fs.stat(config.data.dir + "/" + dir, function (err, stat) {
           if (stat.isDirectory()) {
-            var layer = dir;
+            var source = dir;
 
               var filePath = config.data.dir + "/" + dir + '/' + dir + '.' + file + '.ndjson',
                   base = path.basename(filePath);
 
               fs.exists(filePath, function (exists) {
                 if (exists) {
-                  var url = 'layers/' + layer + "/" + base.replace(layer + ".", "");
+                  var url = 'sources/' + source + "/" + base.replace(source + ".", "");
                       formData = {file: fs.createReadStream(filePath)};
 
                   request.post("http://" + config.io.host + ":" + config.io.port + "/" + url, {formData: formData}, function optionalCallback(err, res, body) {
