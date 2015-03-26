@@ -7,7 +7,8 @@ var fs = require('fs'),
     files = [
       'pits',
       'relations'
-    ];
+    ],
+    args = process.argv.slice(2);
 
 fs.readdir(config.data.dir, function(err, directories){
   async.eachSeries(files, function(file, callback) {
@@ -16,7 +17,7 @@ fs.readdir(config.data.dir, function(err, directories){
         fs.stat(config.data.dir + "/" + dir, function (err, stat) {
           if (stat.isDirectory()) {
             var source = dir;
-
+            if (args.length == 0 || args.indexOf(source) > -1) {
               var filePath = config.data.dir + "/" + dir + '/' + dir + '.' + file + '.ndjson',
                   base = path.basename(filePath);
 
@@ -51,6 +52,9 @@ fs.readdir(config.data.dir, function(err, directories){
                   callback();
                 }
               });
+            } else {
+              callback();
+            }
           } else {
             callback();
           }
