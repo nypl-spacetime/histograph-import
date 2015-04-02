@@ -17,3 +17,7 @@ To clear __all__ sources:
 To clear a selection of sources, run
 
     node index.js --clear <source1> <source2> ...
+
+## License
+
+The source for Histograph is released under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
