@@ -1,12 +1,24 @@
 # histograph-import
 
-Running `node index.js` will import PITs and relations from all subdirectories of directory set in `config.json`.
+histograph-import can bulk import source data from a directory containing multiple Histograph source data files.
 
-Histograph IO must be running, on host & port specified in `config.json`
+You can set the directory histograph-import uses in the [Histograph configuration file](https://github.com/histograph/config).
 
-You can also run `node index.js <source1> <source2> ...` to only import a selection of data sources into Histograph.
+Prerequisites:
 
-### Remove source(s) from Histograph
+- Run `npm install`
+- [Histograph Core](https://github.com/histograph/core) must be running
+- [Histograph API](https://github.com/histograph/api) must be running
+
+## Create admin user and source containers
+
+Run `node init.js`.
+
+## Import data into Histograph
+
+Running `node index.js` will import PITs and relations from all subdirectories of directory set in the configuration file. You can also run `node index.js <source1> <source2> ...` to only import a selection of data sources into Histograph.
+
+## Remove source(s) from Histograph
 
 histograph-import can also remove sources from Histograph.
 
