@@ -66,7 +66,10 @@ fs.readdir(config.data.dir, function(err, directories) {
                   } else {
                     var formData = {file: fs.createReadStream(filePath)};
 
-                    request.post('http://' + config.io.host + ':' + config.io.port + '/' + url, {
+                    request.put('http://' +
+                      config.api.admin.name + ':' + config.api.admin.password + '@' +
+                      config.api.host + ':' + config.api.internalPort +
+                      '/' + url, {
                       formData: formData
                     }, response);
                   }
