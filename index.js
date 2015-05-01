@@ -10,7 +10,7 @@ var args = process.argv.slice(clear ? 3 : 2);
 
 require('colors');
 
-async.mapSeries(config.data.dirs, function(dataDir, callback) {
+async.mapSeries(config.import.dirs, function(dataDir, callback) {
   fs.readdir(dataDir, function(err, directories) {
     var directories = directories.filter(function(dir) {
       if (dir === '.') {
