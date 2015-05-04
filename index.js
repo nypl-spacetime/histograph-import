@@ -100,7 +100,12 @@ function deleteSource(sourceId, callback) {
 }
 
 function apiUrl(url) {
-  return 'http://' +
+  var transport = 'http';
+  if (config.api.internalPort === 443) {
+    transport = 'https';
+  }
+
+  return transport + '://' +
     config.api.admin.name + ':' + config.api.admin.password + '@' +
     config.api.host + ':' + config.api.internalPort + '/' + url;
 }
@@ -141,6 +146,8 @@ function uploadData(source, callback) {
               console.log(JSON.stringify(message, null, 2).split('\n').map(function(line) {
                 return '\t' + line;
               }).join('\n'));
+            } else {
+              console.log(message.message)
             }
           }
           callback();
