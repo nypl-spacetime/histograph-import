@@ -74,7 +74,7 @@ function createSource(source, callback) {
     }, function(err, res, body) {
       if (err) {
         callback(err.message);
-      } else if (res.statusCode === 200 || res.statusCode === 409) {
+      } else if (res.statusCode === 201 || res.statusCode === 409) {
         callback();
       } else {
         callback(JSON.parse(res.body).message);
@@ -84,7 +84,6 @@ function createSource(source, callback) {
     callback('source meta data not found');
   }
 }
-
 
 function deleteSource(sourceId, callback) {
   request(apiUrl('sources/' + sourceId), {
