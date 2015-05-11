@@ -8,12 +8,17 @@ var async = require('async');
 var clear = process.argv[2] === '--clear';
 var args = process.argv.slice(clear ? 3 : 2);
 
+var ignoredDirs = [
+  'node_modules',
+  '.git'
+];
+
 require('colors');
 
 async.mapSeries(config.import.dirs, function(dataDir, callback) {
   fs.readdir(dataDir, function(err, directories) {
     var directories = directories.filter(function(dir) {
-      if (dir === '.') {
+      if (dir === '.' || ignoredDirs.indexOf(dir) > -1) {
         return false;
       } else {
         return (args.length === 0 || args.indexOf(dir) > -1)
