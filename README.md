@@ -10,10 +10,6 @@ Prerequisites:
 - [Histograph Core](https://github.com/histograph/core) must be running
 - [Histograph API](https://github.com/histograph/api) must be running
 
-## Create admin user and source containers
-
-Run `node init.js`.
-
 ## Import data into Histograph
 
 Running `node index.js` will import PITs and relations from all subdirectories of directory set in the configuration file. You can also run `node index.js <source1> <source2> ...` to only import a selection of data sources into Histograph.
