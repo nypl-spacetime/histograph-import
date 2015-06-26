@@ -34,7 +34,6 @@ histograph-import expects each directory to contain a set of subdirectories cont
 
 ![](dirs.png)
 
-
 Running `histograph-import` will import PITs and relations from all subdirectories of directory set in the configuration file. You can also run `node index.js <source1> <source2> ...` to only import a selection of data sources into Histograph. For example, you can run:
 
     histograph-import tgn
