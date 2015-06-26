@@ -2,21 +2,44 @@
 
 histograph-import can bulk import source data from a directory containing multiple Histograph source data files.
 
-You can set the directory histograph-import uses in the [Histograph configuration file](https://github.com/histograph/config).
+## Installation
 
-Prerequisites:
+Easy:
 
-- Run `npm install`
-- [Histograph Core](https://github.com/histograph/core) must be running
-- [Histograph API](https://github.com/histograph/api) must be running
+    npm install -g histograph/import
 
-## Create admin user and source containers
+## Usage
 
-Run `node init.js`.
+Also easy.
 
-## Import data into Histograph
+Create a [Histograph configuration file](https://github.com/histograph/config), and set the environment variable `HISTOGRAPH_CONFIG` to the absolute path of this file, for example:
 
-Running `node index.js` will import PITs and relations from all subdirectories of directory set in the configuration file. You can also run `node index.js <source1> <source2> ...` to only import a selection of data sources into Histograph.
+    export HISTOGRAPH_CONFIG=/Users/bert/code/histograph/config/histograph.json
+
+To use histograph-import, `histograph.json` should contain a section named `import` containing an array `dirs`:
+
+```json
+{
+  "import": {
+    "dirs": [
+      "relative/or/absolute/path/to/directory/with/histograph/datasets",
+      "/Users/bert/Downloads/histograph-data",
+      ...
+    ]
+  }
+}
+```
+
+histograph-import expects each directory to contain a set of subdirectories containing data for one dataset. Each dataset subdirectory should contain a JSON file containing dataset metadata, and NDJSON files containing PITs, relations, or both. __Important__: histograph-import expects files to adhere to the following naming convention - files in the directory `dataset1` should be named `dataset1.source.json`, `dataset1.pits.ndjson` and `dataset1.relations.ndjson`.
+
+![](dirs.png)
+
+
+Running `histograph-import` will import PITs and relations from all subdirectories of directory set in the configuration file. You can also run `node index.js <source1> <source2> ...` to only import a selection of data sources into Histograph. For example, you can run:
+
+    histograph-import tgn
+
+This will import only data from the subdirectory `tgn` into Histograph.
 
 ## Remove source(s) from Histograph
 
@@ -24,11 +47,11 @@ histograph-import can also remove sources from Histograph.
 
 To clear __all__ sources:
 
-    node index.js --clear
+    histograph-import --clear
 
 To clear a selection of sources, run
 
-    node index.js --clear <source1> <source2> ...
+    histograph-import --clear <source1> <source2> ...
 
 ## License
 

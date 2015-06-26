@@ -1,10 +1,13 @@
 {
   "name": "histograph-import",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Imports data into Histograph",
   "main": "index.js",
   "scripts": {
     "test": "jshint index.js && jscs index.js"
+  },
+  "bin": {
+    "histograph-import": "index.js"
   },
   "repository": {
     "type": "git",
