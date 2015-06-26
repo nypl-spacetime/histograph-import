@@ -24,7 +24,7 @@ To use histograph-import, `histograph.json` should contain a section named `impo
     "dirs": [
       "relative/or/absolute/path/to/directory/with/histograph/datasets",
       "/Users/bert/Downloads/histograph-data",
-      ...
+      "..."
     ]
   }
 }
