@@ -23,8 +23,8 @@
       <h1>Histograph IO</h1>
       <p>
         Drag and drop <a href="http://ndjson.org/">NDJSON</a> files into
-		Histograph! Files must be named <code>&lt;source&gt;.pits.ndjson</code>
-		or <code>&lt;source&gt;.relations.ndjson</code>, and adhere to <a href="https://github.com/histograph/schemas/tree/master/json">Histograph's JSON schemas</a>. Also, the data source <code>&lt;source&gt;</code> must already exist in the API.
+		Histograph! Files must be named <code>&lt;dataset&gt;.pits.ndjson</code>
+		or <code>&lt;dataset&gt;.relations.ndjson</code>, and adhere to <a href="https://github.com/histograph/schemas/tree/master/json">Histograph's JSON schemas</a>. Also, the data dataset <code>&lt;dataset&gt;</code> must already exist in the API.
       </p>
       <p>
         <table id="config">
@@ -48,9 +48,9 @@
           </tr>
         </table>
       </p>
-      <form action="/sources" class="dropzone" id="histograph"></form>
-      <h2>Sources</h2>
-      <p id="sources"></p>
+      <form action="/datasets" class="dropzone" id="histograph"></form>
+      <h2>Datasets</h2>
+      <p id="datasets"></p>
     </div>
   </div>
   <script>
@@ -60,16 +60,16 @@
       password: ''
     };
 
-    function refreshSources() {
-      d3.select('#sources').selectAll('span').remove();
+    function refreshDatasets() {
+      d3.select('#datasets').selectAll('span').remove();
 
-      d3.json(config.apiUrl + 'sources', function(json) {
-        d3.select('#sources').selectAll('span')
+      d3.json(config.apiUrl + 'datasets', function(json) {
+        d3.select('#datasets').selectAll('span')
             .data(json).enter()
           .append('span')
             .each(function(d, i) {
               d3.select(this).append('code').append('a')
-                  .attr('href', config.apiUrl + 'sources/' + d.id)
+                  .attr('href', config.apiUrl + 'datasets/' + d.id)
                   .html(d.title)
               if (i < json.length - 1) {
                 d3.select(this).html(d3.select(this).html() + ', ');
@@ -83,14 +83,14 @@
       config[name] = this.value;
 
       if (name === 'apiUrl') {
-        refreshSources();
+        refreshDatasets();
       }
     });
 
     function urlFromFilename(filename) {
       var fileElements = filename.split('.');
       if (fileElements.length == 3) {
-        return config.apiUrl + 'sources/' + fileElements[0] + '/' + fileElements[1];
+        return config.apiUrl + 'datasets/' + fileElements[0] + '/' + fileElements[1];
       } else {
         return null;
       }
@@ -115,7 +115,7 @@
         });
       },
       accept: function(file, done) {
-        // file.name must use naming convention: "source.type.extension";
+        // file.name must use naming convention: "dataset.type.extension";
         var url = urlFromFilename(file.name);
         if (url) {
           done();
@@ -125,7 +125,7 @@
       }
     };
 
-    refreshSources();
+    refreshDatasets();
   </script>
 </body>
 </html>
