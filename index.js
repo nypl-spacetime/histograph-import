@@ -1,9 +1,9 @@
 var fs = require('fs');
-var config = require(process.env.HISTOGRAPH_CONFIG);
 var path = require('path');
-var _ = require('underscore');
 var request = require('request');
 var async = require('async');
+var _ = require('underscore');
+var config = require(process.env.HISTOGRAPH_CONFIG);
 
 var clear = process.argv[2] === '--clear';
 var args = process.argv.slice(clear ? 3 : 2);
@@ -17,49 +17,49 @@ require('colors');
 
 async.mapSeries(config.import.dirs, function(dataDir, callback) {
   fs.readdir(dataDir, function(err, directories) {
-    var directories = directories.filter(function(dir) {
+    directories = directories.filter(function(dir) {
       if (dir === '.' || ignoredDirs.indexOf(dir) > -1) {
         return false;
       } else {
-        return (args.length === 0 || args.indexOf(dir) > -1)
+        return (args.length === 0 || args.indexOf(dir) > -1);
       }
     }).map(function(dir) {
       return {
         id: dir,
         dir: path.join(dataDir, dir)
       };
-    }).filter(function(source) {
-      var stat = fs.statSync(source.dir)
+    }).filter(function(dataset) {
+      var stat = fs.statSync(dataset.dir);
       return stat.isDirectory();
     });
     callback(null, directories);
   });
-}, function(err, sources) {
-  async.eachSeries(_.flatten(sources), function(source, callback) {
-    importSourceFromDir(source, function() {
+}, function(err, datasets) {
+  async.eachSeries(_.flatten(datasets), function(dataset, callback) {
+    importDatasetFromDir(dataset, function() {
       callback();
     });
   });
 });
 
-function importSourceFromDir(source, callback) {
+function importDatasetFromDir(dataset, callback) {
   if (clear) {
-    deleteSource(source.id, function(err) {
+    deleteDataset(dataset.id, function(err) {
       if (err) {
-        console.error('Deleting source failed: '.red + err);
+        console.error('Deleting dataset failed: '.red + err);
       } else {
-        console.error('Deleted source: '.green + source.id);
+        console.error('Deleted dataset: '.green + dataset.id);
       }
       callback();
     });
   } else {
-    createSource(source, function(err) {
+    createDataset(dataset, function(err) {
       if (err) {
-        console.error(('Creating source ' + source.id + ' failed: ').red + JSON.stringify(err));
+        console.error(('Creating dataset ' + dataset.id + ' failed: ').red + JSON.stringify(err));
         callback();
       } else {
-        console.error('Created or found source: '.green + source.id);
-        uploadData(source, function() {
+        console.error('Created or found dataset: '.green + dataset.id);
+        uploadData(dataset, function() {
           callback();
         });
       }
@@ -67,12 +67,12 @@ function importSourceFromDir(source, callback) {
   }
 }
 
-function createSource(source, callback) {
-  var filename = path.join(source.dir, source.id + '.source.json');
+function createDataset(dataset, callback) {
+  var filename = path.join(dataset.dir, dataset.id + '.dataset.json');
   // TODO: check if file exists!
 
   if (fs.existsSync(filename)) {
-    request(apiUrl('sources'), {
+    request(apiUrl('datasets'), {
       method: 'POST',
       headers: {'content-type': 'application/json'},
       body: fs.readFileSync(filename, 'utf8')
@@ -86,12 +86,12 @@ function createSource(source, callback) {
       }
     });
   } else {
-    callback('source meta data not found');
+    callback('dataset JSON file `' + dataset.id + '.dataset.json` not found');
   }
 }
 
-function deleteSource(sourceId, callback) {
-  request(apiUrl('sources/' + sourceId), {
+function deleteDataset(datasetId, callback) {
+  request(apiUrl('datasets/' + datasetId), {
     method: 'DELETE'
   }, function(err, res, body) {
     if (err) {
@@ -110,21 +110,21 @@ function apiUrl(url) {
     config.api.host + ':' + config.api.internalPort + '/' + url;
 }
 
-function uploadData(source, callback) {
+function uploadData(dataset, callback) {
   var files = [
     'pits',
     'relations'
   ];
 
   async.eachSeries(files, function(file, callback) {
-    var filename = path.join(source.dir, source.id + '.' + file + '.ndjson');
+    var filename = path.join(dataset.dir, dataset.id + '.' + file + '.ndjson');
     var base = path.basename(filename);
 
     fs.exists(filename, function(exists) {
       if (exists) {
         var formData = {file: fs.createReadStream(filename)};
 
-        request.put(apiUrl('sources/' + source.id + '/' + file), {
+        request.put(apiUrl('datasets/' + dataset.id + '/' + file), {
           formData: formData,
           headers: {'content-type': 'application/x-ndjson'}
         }, function(err, res, body) {
@@ -147,7 +147,7 @@ function uploadData(source, callback) {
                 return '\t' + line;
               }).join('\n'));
             } else {
-              console.log(message.message)
+              console.log(message.message);
             }
           }
           callback();
