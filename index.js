@@ -105,12 +105,7 @@ function deleteSource(sourceId, callback) {
 }
 
 function apiUrl(url) {
-  var transport = 'http';
-  if (config.api.internalPort === 443) {
-    transport = 'https';
-  }
-
-  return transport + '://' +
+  return config.api.protocol + '://' +
     config.api.admin.name + ':' + config.api.admin.password + '@' +
     config.api.host + ':' + config.api.internalPort + '/' + url;
 }
