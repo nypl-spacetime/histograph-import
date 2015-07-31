@@ -5,7 +5,7 @@ var path = require('path');
 var request = require('request');
 var async = require('async');
 var _ = require('underscore');
-var config = require(process.env.HISTOGRAPH_CONFIG);
+var config = require('histograph-config');
 
 var clear = process.argv[2] === '--clear';
 var args = process.argv.slice(clear ? 3 : 2);
