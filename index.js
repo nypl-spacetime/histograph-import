@@ -109,7 +109,7 @@ function deleteDataset(datasetId, callback) {
 function apiUrl(url) {
   return config.api.protocol + '://' +
     config.api.admin.name + ':' + config.api.admin.password + '@' +
-    config.api.host + ':' + config.api.internalPort + '/' + url;
+    config.api.host + ':' + config.api.port + '/' + url;
 }
 
 function uploadData(dataset, callback) {
