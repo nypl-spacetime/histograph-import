@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var url = require('url');
 var request = require('request');
 var async = require('async');
 var _ = require('underscore');
@@ -106,10 +107,11 @@ function deleteDataset(datasetId, callback) {
   });
 }
 
-function apiUrl(url) {
-  return config.api.protocol + '://' +
-    config.api.admin.name + ':' + config.api.admin.password + '@' +
-    config.api.host + ':' + config.api.port + '/' + url;
+function apiUrl(path) {
+  var urlObj = url.parse(config.api.baseUrl);
+  urlObj.auth = config.api.admin.name + ':' + config.api.admin.password;
+  urlObj.pathname = path;
+  return url.format(urlObj);
 }
 
 function uploadData(dataset, callback) {
