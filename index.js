@@ -6,10 +6,17 @@ var url = require('url');
 var request = require('request');
 var async = require('async');
 var _ = require('underscore');
+var minimist = require('minimist');
 var config = require('histograph-config');
 
-var clear = process.argv[2] === '--clear';
-var args = process.argv.slice(clear ? 3 : 2);
+var argv = minimist(process.argv.slice(2), {
+  boolean: [
+    'force',
+    'clear'
+  ]
+});
+
+var datasets = argv._;
 
 var ignoredDirs = [
   'node_modules',
@@ -24,7 +31,7 @@ async.mapSeries(config.import.dirs, function(dataDir, callback) {
       if (dir === '.' || ignoredDirs.indexOf(dir) > -1) {
         return false;
       } else {
-        return (args.length === 0 || args.indexOf(dir) > -1);
+        return (datasets.length === 0 || datasets.indexOf(dir) > -1);
       }
     }).map(function(dir) {
       return {
@@ -46,7 +53,7 @@ async.mapSeries(config.import.dirs, function(dataDir, callback) {
 });
 
 function importDatasetFromDir(dataset, callback) {
-  if (clear) {
+  if (argv.clear) {
     deleteDataset(dataset.id, function(err) {
       if (err) {
         console.error('Deleting dataset failed: '.red + err);
@@ -130,7 +137,10 @@ function uploadData(dataset, callback) {
 
         request.put(apiUrl('datasets/' + dataset.id + '/' + file), {
           formData: formData,
-          headers: {'content-type': 'application/x-ndjson'}
+          headers: {
+            'content-type': 'application/x-ndjson',
+            'x-histograph-force': argv.force
+          }
         }, function(err, res, body) {
           if (err) {
             console.error('Upload failed: '.red + base);

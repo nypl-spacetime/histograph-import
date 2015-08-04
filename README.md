@@ -12,22 +12,14 @@ Easy:
 
 Also easy.
 
-Create a [Histograph configuration file](https://github.com/histograph/config), and set the environment variable `HISTOGRAPH_CONFIG` to the absolute path of this file, for example:
+histograph-import expects a `import.dirs` entry in the [Histograph configuration file](https://github.com/histograph/config):
 
-    export HISTOGRAPH_CONFIG=/Users/bert/code/histograph/config/histograph.json
-
-To use histograph-import, `histograph.json` should contain a section named `import` containing an array `dirs`:
-
-```json
-{
-  "import": {
-    "dirs": [
-      "relative/or/absolute/path/to/directory/with/histograph/datasets",
-      "/Users/bert/Downloads/histograph-data",
-      "..."
-    ]
-  }
-}
+```yaml
+import:
+  dirs:
+    - /relative/or/absolute/path/to/directory/with/histograph/datasets
+    - /Users/bert/Downloads/histograph-data
+    - ...
 ```
 
 histograph-import expects each directory to contain a set of subdirectories containing data for one dataset. Each dataset subdirectory should contain a JSON file containing dataset metadata, and NDJSON files containing PITs, relations, or both. __Important__: histograph-import expects files to adhere to the following naming convention - files in the directory `dataset1` should be named `dataset1.dataset.json`, `dataset1.pits.ndjson` and `dataset1.relations.ndjson`.
@@ -53,6 +45,12 @@ To clear __all__ datasets:
 To clear a selection of datasets, run
 
     histograph-import --clear <dataset1> <dataset2> ...
+
+## Force import
+
+By default, the Histograph API [diffs](https://en.wikipedia.org/wiki/Diff_utility) each uploaded NDJSON file with the previous version (if present), and sends only changed items to the message queue for further processing. By supplying the `--force` parameter, also unchanged items are processed:
+
+    histograph-import --force <dataset1> <dataset2> ...
 
 ## License
 
