@@ -1,12 +1,22 @@
+#!/usr/bin/env node
+
 var fs = require('fs');
-var config = require(process.env.HISTOGRAPH_CONFIG);
 var path = require('path');
-var _ = require('underscore');
+var url = require('url');
 var request = require('request');
 var async = require('async');
+var _ = require('underscore');
+var minimist = require('minimist');
+var config = require('histograph-config');
 
-var clear = process.argv[2] === '--clear';
-var args = process.argv.slice(clear ? 3 : 2);
+var argv = minimist(process.argv.slice(2), {
+  boolean: [
+    'force',
+    'clear'
+  ]
+});
+
+var datasets = argv._;
 
 var ignoredDirs = [
   'node_modules',
@@ -17,49 +27,49 @@ require('colors');
 
 async.mapSeries(config.import.dirs, function(dataDir, callback) {
   fs.readdir(dataDir, function(err, directories) {
-    var directories = directories.filter(function(dir) {
+    directories = directories.filter(function(dir) {
       if (dir === '.' || ignoredDirs.indexOf(dir) > -1) {
         return false;
       } else {
-        return (args.length === 0 || args.indexOf(dir) > -1)
+        return (datasets.length === 0 || datasets.indexOf(dir) > -1);
       }
     }).map(function(dir) {
       return {
         id: dir,
         dir: path.join(dataDir, dir)
       };
-    }).filter(function(source) {
-      var stat = fs.statSync(source.dir)
+    }).filter(function(dataset) {
+      var stat = fs.statSync(dataset.dir);
       return stat.isDirectory();
     });
     callback(null, directories);
   });
-}, function(err, sources) {
-  async.eachSeries(_.flatten(sources), function(source, callback) {
-    importSourceFromDir(source, function() {
+}, function(err, datasets) {
+  async.eachSeries(_.flatten(datasets), function(dataset, callback) {
+    importDatasetFromDir(dataset, function() {
       callback();
     });
   });
 });
 
-function importSourceFromDir(source, callback) {
-  if (clear) {
-    deleteSource(source.id, function(err) {
+function importDatasetFromDir(dataset, callback) {
+  if (argv.clear) {
+    deleteDataset(dataset.id, function(err) {
       if (err) {
-        console.error('Deleting source failed: '.red + err);
+        console.error('Deleting dataset failed: '.red + err);
       } else {
-        console.error('Deleted source: '.green + source.id);
+        console.error('Deleted dataset: '.green + dataset.id);
       }
       callback();
     });
   } else {
-    createSource(source, function(err) {
+    createDataset(dataset, function(err) {
       if (err) {
-        console.error(('Creating source ' + source.id + ' failed: ').red + JSON.stringify(err));
+        console.error(('Creating dataset ' + dataset.id + ' failed: ').red + JSON.stringify(err));
         callback();
       } else {
-        console.error('Created or found source: '.green + source.id);
-        uploadData(source, function() {
+        console.error('Created or found dataset: '.green + dataset.id);
+        uploadData(dataset, function() {
           callback();
         });
       }
@@ -67,12 +77,12 @@ function importSourceFromDir(source, callback) {
   }
 }
 
-function createSource(source, callback) {
-  var filename = path.join(source.dir, source.id + '.source.json');
+function createDataset(dataset, callback) {
+  var filename = path.join(dataset.dir, dataset.id + '.dataset.json');
   // TODO: check if file exists!
 
   if (fs.existsSync(filename)) {
-    request(apiUrl('sources'), {
+    request(apiUrl('datasets'), {
       method: 'POST',
       headers: {'content-type': 'application/json'},
       body: fs.readFileSync(filename, 'utf8')
@@ -86,12 +96,12 @@ function createSource(source, callback) {
       }
     });
   } else {
-    callback('source meta data not found');
+    callback('dataset JSON file `' + dataset.id + '.dataset.json` not found');
   }
 }
 
-function deleteSource(sourceId, callback) {
-  request(apiUrl('sources/' + sourceId), {
+function deleteDataset(datasetId, callback) {
+  request(apiUrl('datasets/' + datasetId), {
     method: 'DELETE'
   }, function(err, res, body) {
     if (err) {
@@ -104,34 +114,33 @@ function deleteSource(sourceId, callback) {
   });
 }
 
-function apiUrl(url) {
-  var transport = 'http';
-  if (config.api.internalPort === 443) {
-    transport = 'https';
-  }
-
-  return transport + '://' +
-    config.api.admin.name + ':' + config.api.admin.password + '@' +
-    config.api.host + ':' + config.api.internalPort + '/' + url;
+function apiUrl(path) {
+  var urlObj = url.parse(config.api.baseUrl);
+  urlObj.auth = config.api.admin.name + ':' + config.api.admin.password;
+  urlObj.pathname = path;
+  return url.format(urlObj);
 }
 
-function uploadData(source, callback) {
+function uploadData(dataset, callback) {
   var files = [
     'pits',
     'relations'
   ];
 
   async.eachSeries(files, function(file, callback) {
-    var filename = path.join(source.dir, source.id + '.' + file + '.ndjson');
+    var filename = path.join(dataset.dir, dataset.id + '.' + file + '.ndjson');
     var base = path.basename(filename);
 
     fs.exists(filename, function(exists) {
       if (exists) {
         var formData = {file: fs.createReadStream(filename)};
 
-        request.put(apiUrl('sources/' + source.id + '/' + file), {
+        request.put(apiUrl('datasets/' + dataset.id + '/' + file), {
           formData: formData,
-          headers: {'content-type': 'application/x-ndjson'}
+          headers: {
+            'content-type': 'application/x-ndjson',
+            'x-histograph-force': argv.force
+          }
         }, function(err, res, body) {
           if (err) {
             console.error('Upload failed: '.red + base);
@@ -152,7 +161,7 @@ function uploadData(source, callback) {
                 return '\t' + line;
               }).join('\n'));
             } else {
-              console.log(message.message)
+              console.log(message.message);
             }
           }
           callback();
