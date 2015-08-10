@@ -16,7 +16,7 @@ var argv = minimist(process.argv.slice(2), {
   ]
 });
 
-var datasets = argv._;
+var datasets = _.uniq(argv._);
 
 var ignoredDirs = [
   'node_modules',
@@ -55,7 +55,9 @@ async.mapSeries(config.import.dirs, function(dataDir, callback) {
       callback();
     });
   }, function() {
-    console.error('Dataset(s) not found in dirs `config.import.dirs`: '.red + notFound.join(', '));
+    if (notFound.length > 0) {
+      console.error('Dataset(s) not found in dirs `config.import.dirs`: '.red + notFound.join(', '));
+    }
   });
 });
 
