@@ -44,11 +44,18 @@ async.mapSeries(config.import.dirs, function(dataDir, callback) {
     });
     callback(null, directories);
   });
-}, function(err, datasets) {
-  async.eachSeries(_.flatten(datasets), function(dataset, callback) {
-    importDatasetFromDir(dataset, function() {
+}, function(err, dirs) {
+  var notFound = datasets;
+  var dirs = _.flatten(dirs);
+  async.eachSeries(dirs, function(dir, callback) {
+    if (datasets.length > 0) {
+      notFound.splice(notFound.indexOf(dir.id), 1);
+    }
+    importDatasetFromDir(dir, function() {
       callback();
     });
+  }, function() {
+    console.error('Dataset(s) not found in dirs `config.import.dirs`: '.red + notFound.join(', '));
   });
 });
 
