@@ -25,6 +25,8 @@ var ignoredDirs = [
 
 require('colors');
 
+console.log('Using ' + config.api.baseUrl);
+
 async.mapSeries(config.import.dirs, function(dataDir, callback) {
   fs.readdir(dataDir, function(err, directories) {
     directories = directories.filter(function(dir) {
