@@ -70,4 +70,8 @@ By default, the Histograph API [diffs](https://en.wikipedia.org/wiki/Diff_utilit
 
     histograph-import --force <dataset1> <dataset2> ...
 
+# License
+
+MIT
+
 Copyright (C) 2015 [Waag Society](http://waag.org).
