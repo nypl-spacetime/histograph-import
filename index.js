@@ -125,7 +125,7 @@ var uploadData = function(d, type, callback) {
         }
       });
     } else {
-      console.log('  File not found: ' + filename);
+      console.log(chalk.gray('  File not found: ' + filename));
       callback();
     }
   });
@@ -180,7 +180,7 @@ if (argv._.length === 0 && !argv.all) {
 
   // Keep list of matched dataset arguments
   var matchedArgs = [];
-  var duuuble = [];
+  var matchedMultiple = [];
 
   datasets
     .filter(function(d) {
@@ -202,7 +202,7 @@ if (argv._.length === 0 && !argv.all) {
       // If dataset is encountered more than once (e.g. once on fs, once on S3)
       //   only import this dataset once
       if (matchedDatasetIds.indexOf(d.id) > -1) {
-        duuuble.push(d);
+        matchedMultiple.push(d);
         return false;
       }
 
@@ -245,7 +245,7 @@ if (argv._.length === 0 && !argv.all) {
           }
         });
 
-        var doubleDatasetIds = duuuble.map(function(d) {
+        var doubleDatasetIds = matchedMultiple.map(function(d) {
           return storage[d.type].path(d);
         });
 
@@ -255,9 +255,9 @@ if (argv._.length === 0 && !argv.all) {
           return doubleDatasetIds.indexOf(arg) === -1;
         });
 
-        if (duuuble.length) {
+        if (matchedMultiple.length) {
           console.log(chalk.red('The following arguments matched a dataset more then once, and were not imported: '));
-          duuuble.forEach(function(d) {
+          matchedMultiple.forEach(function(d) {
             console.log(chalk.red(' - ') + formatDataset(d));
           });
         }
