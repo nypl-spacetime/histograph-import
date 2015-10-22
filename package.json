@@ -4,7 +4,7 @@
   "description": "Imports data into Histograph",
   "main": "index.js",
   "scripts": {
-    "test": "jshint index.js && jscs index.js"
+    "test": "jshint *.js lib/*.js && jscs *.js lib/*.js"
   },
   "bin": {
     "histograph-import": "index.js"
@@ -21,7 +21,9 @@
   "homepage": "https://github.com/histograph/import",
   "dependencies": {
     "async": "^0.9.0",
-    "colors": "^1.0.3",
+    "aws-sdk": "^2.2.10",
+    "chalk": "^1.1.1",
+    "highland": "^2.5.1",
     "histograph-config": "histograph/config",
     "minimist": "^1.1.2",
     "request": "^2.53.0",
