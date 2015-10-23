@@ -7,7 +7,7 @@ var chalk = require('chalk');
 var minimist = require('minimist');
 var config = require('histograph-config');
 
-var api = require('./api');
+var apiClient = require('./api-client');
 
 var storage = {
   fs: require('./storage/fs.js'),
@@ -84,7 +84,7 @@ var readDatasetFile = H.wrapCallback(function(d, callback) {
 });
 
 var createDataset = function(d, callback) {
-  api.createDataset(d.dataset, function(err, res, body) {
+  apiClient.createDataset(d.dataset, function(err, res, body) {
     if (res && (res.statusCode === 201 || res.statusCode === 409)) {
       var message;
       if (res.statusCode === 201) {
@@ -104,7 +104,7 @@ var createDataset = function(d, callback) {
 };
 
 var deleteDataset = function(d, callback) {
-  api.deleteDataset(d.dataset.id, function(err, res, body) {
+  apiClient.deleteDataset(d.dataset.id, function(err, res, body) {
     if (res && res.statusCode === 200) {
       console.log(chalk.green('Deleted dataset: ') + formatDataset(d));
       callback(null, d);
@@ -125,7 +125,7 @@ var uploadData = function(d, type, callback) {
     if (size) {
       var force = argv.force;
       var readStream = storage[d.type].createReadStream(d, filename);
-      api.uploadData(d.id, type, readStream, size, force, function(err, res, body) {
+      apiClient.uploadData(d.id, type, readStream, size, force, function(err, res, body) {
         if (res && res.statusCode == 200) {
           console.log(chalk.green('  Upload successful: ') + formatDataset(d, filename));
 
