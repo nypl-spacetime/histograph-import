@@ -136,7 +136,7 @@ var uploadData = function(d, type, callback) {
         }
       });
     } else {
-      console.log(chalk.gray('  File not found: ' + formatDataset(d, filename)));
+      console.log(chalk.gray('  File not found: ' + chalk.stripColor(formatDataset(d, filename))));
       callback();
     }
   });
