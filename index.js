@@ -271,7 +271,7 @@ if (argv._.length === 0 && !argv.all) {
         if (matchedMultiple.length) {
           console.log(chalk.red('The following arguments matched a dataset more then once, and were not imported: '));
           matchedMultiple.forEach(function(d) {
-            console.log(chalk.red(' - ') + formatDataset(d));
+            console.log(' - ' + formatDataset(d));
           });
         }
 
