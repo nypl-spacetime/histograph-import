@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var util = require('util');
+var path = require('path');
 var H = require('highland');
 var chalk = require('chalk');
 var minimist = require('minimist');
@@ -40,8 +41,8 @@ var getFilename = function(dataset, type) {
   return util.format('%s.%s.%s', dataset, type, ext);
 };
 
-var formatDataset = function(d) {
-  return util.format('%s %s', d.id, chalk[colors[d.type]](storage[d.type].path(d)));
+var formatDataset = function(d, filename) {
+  return util.format('%s %s', filename || d.id, chalk[colors[d.type]](path.join(storage[d.type].path(d), filename || '')));
 };
 
 var formatError = function(err, body) {
@@ -126,7 +127,10 @@ var uploadData = function(d, type, callback) {
       var readStream = storage[d.type].createReadStream(d, filename);
       api.uploadData(d.id, type, readStream, size, force, function(err, res, body) {
         if (res && res.statusCode == 200) {
-          console.log(chalk.green('  Upload successful: ') + filename);
+          console.log(chalk.green('  Upload successful: ') + formatDataset(d, filename));
+
+
+
           callback(null, d);
         } else {
           console.error(chalk.red('  Upload failed: ') + filename);
