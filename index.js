@@ -159,7 +159,11 @@ console.log(util.format('Using %s - colors: %s\n', chalk.underline(config.api.ba
 var datasets = H([
   storage.fs.list(),
   storage.s3.list()
-]).flatten();
+]).flatten()
+  .errors(function(err) {
+    console.log(chalk.red('Error reading directory:'));
+    console.log('  ' + err.message);
+  });
 
 var count = 0;
 if (argv._.length === 0 && !argv.all) {

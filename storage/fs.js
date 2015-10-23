@@ -13,7 +13,12 @@ var ignoredDirs = [
 // Reads all files for a single dir, and returns dataset description
 var readDir = H.wrapCallback(function(dir, callback) {
   return fs.readdir(dir, function(err, files) {
-    callback(err, files.map(function(file) {
+    var dirs = [];
+    if (!err) {
+      dirs = files || [];
+    }
+
+    callback(err, dirs.map(function(file) {
       return {
         type: 'fs',
         dir: dir,
