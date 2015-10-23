@@ -1,22 +1,32 @@
 #!/usr/bin/env node
 
 var util = require('util');
-var chalk = require('chalk');
 var H = require('highland');
+var chalk = require('chalk');
 var minimist = require('minimist');
 var config = require('histograph-config');
 
 var api = require('./api');
 
 var storage = {
-  fs: require('./lib/fs.js'),
-  s3: require('./lib/s3.js')
+  fs: require('./storage/fs.js'),
+  s3: require('./storage/s3.js')
 };
 
 var colors = {
   fs: 'blue',
   s3: 'yellow'
 };
+
+var argv = minimist(process.argv.slice(2), {
+  boolean: [
+    'all',
+    'force',
+    'delete'
+  ]
+});
+
+// Utility & wrapper functions
 
 var getFilename = function(dataset, type) {
   var ext;
@@ -131,16 +141,13 @@ var uploadData = function(d, type, callback) {
   });
 };
 
-var argv = minimist(process.argv.slice(2), {
-  boolean: [
-    'all',
-    'force',
-    'delete'
-  ]
-});
+// Import logic:
+//   - Fetch available datasets
+//   - filter, using command line arguments
+//   - create/delete datasets in API
+//   - (read NDJSON files, PUT to API)
 
-require('colors');
-
+// Fetch available datasets from file system and S3
 var datasets = H([
   storage.fs.list(),
   storage.s3.list()
@@ -148,6 +155,7 @@ var datasets = H([
 
 var count = 0;
 if (argv._.length === 0 && !argv.all) {
+  // List datasets - don't import anything
   datasets
     .group('type')
     .map(H.pairs)
@@ -168,6 +176,7 @@ if (argv._.length === 0 && !argv.all) {
       console.log('\nUsage: histograph-import [--config /path/to/config.yml] [--delete] [--all] [--force] [[path/]dataset ...]');
     });
 } else {
+  // Import datasets!
   var legend = Object.keys(colors).map(function(type) {
     var color = colors[type];
     return chalk[color](storage[type].title);
@@ -264,8 +273,6 @@ if (argv._.length === 0 && !argv.all) {
 
         if (unmatchedArgs.length) {
           console.log(chalk.red('The following arguments did not match any dataset: ') + unmatchedArgs.join(', '));
-        } else {
-          console.log('Done...');
         }
       }
     });
