@@ -151,6 +151,13 @@ var uploadData = function(d, type, callback) {
 //   - create/delete datasets in API
 //   - (read NDJSON files, PUT to API)
 
+var legend = Object.keys(colors).map(function(type) {
+  var color = colors[type];
+  return chalk[color](storage[type].title);
+}).join(', ');
+
+console.log(util.format('Using %s - colors: %s\n', chalk.underline(config.api.baseUrl), legend));
+
 // Fetch available datasets from file system and S3
 var datasets = H([
   storage.fs.list(),
@@ -181,12 +188,6 @@ if (argv._.length === 0 && !argv.all) {
     });
 } else {
   // Import datasets!
-  var legend = Object.keys(colors).map(function(type) {
-    var color = colors[type];
-    return chalk[color](storage[type].title);
-  }).join(', ');
-
-  console.log(util.format('Using %s - colors: %s\n', chalk.underline(config.api.baseUrl), legend));
 
   // Keep list of dataset IDs
   var matchedDatasetIds = [];
@@ -269,14 +270,14 @@ if (argv._.length === 0 && !argv.all) {
         });
 
         if (matchedMultiple.length) {
-          console.log(chalk.red('The following arguments matched a dataset more then once, and were not imported: '));
+          console.log(chalk.red(util.format('The following %s matched a dataset more then once; the first match was imported, the following %s not imported:', matchedMultiple.length === 1 ? 'argument' : 'arguments', matchedMultiple.length === 1 ? 'match was' : 'matches were')));
           console.log(matchedMultiple.map(function(d) {
             return ' - ' + formatDataset(d);
           }).join('\n'));
         }
 
         if (unmatchedArgs.length) {
-          console.log(chalk.red('The following arguments did not match any dataset: '));
+          console.log(chalk.red(util.format('The following %s did not match any dataset: ', unmatchedArgs.length === 1 ? 'argument' : 'arguments')));
           console.log(unmatchedArgs.map(function(arg) {
             return ' - ' + arg;
           }).join('\n'));
