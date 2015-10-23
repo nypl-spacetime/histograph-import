@@ -128,18 +128,15 @@ var uploadData = function(d, type, callback) {
       apiClient.uploadData(d.id, type, readStream, size, force, function(err, res, body) {
         if (res && res.statusCode == 200) {
           console.log(chalk.green('  Upload successful: ') + formatDataset(d, filename));
-
-
-
           callback(null, d);
         } else {
-          console.error(chalk.red('  Upload failed: ') + filename);
+          console.error(chalk.red('  Upload failed: ') + formatDataset(d, filename));
           console.log(formatError(err, body));
           callback();
         }
       });
     } else {
-      console.log(chalk.gray('  File not found: ' + filename));
+      console.log(chalk.gray('  File not found: ' + formatDataset(d, filename)));
       callback();
     }
   });
