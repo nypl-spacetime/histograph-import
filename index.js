@@ -270,13 +270,16 @@ if (argv._.length === 0 && !argv.all) {
 
         if (matchedMultiple.length) {
           console.log(chalk.red('The following arguments matched a dataset more then once, and were not imported: '));
-          matchedMultiple.forEach(function(d) {
-            console.log(' - ' + formatDataset(d));
-          });
+          console.log(matchedMultiple.map(function(d) {
+            return ' - ' + formatDataset(d);
+          }).join('\n'));
         }
 
         if (unmatchedArgs.length) {
-          console.log(chalk.red('The following arguments did not match any dataset: ') + unmatchedArgs.join(', '));
+          console.log(chalk.red('The following arguments did not match any dataset: '));
+          console.log(unmatchedArgs.map(function(arg) {
+            return ' - ' + arg;
+          }).join('\n'));
         }
       }
     });
