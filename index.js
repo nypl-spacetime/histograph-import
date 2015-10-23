@@ -270,7 +270,7 @@ if (argv._.length === 0 && !argv.all) {
         });
 
         if (matchedMultiple.length) {
-          console.log(chalk.red(util.format('The following %s matched a dataset more then once; the first match was imported, the following %s not imported:', matchedMultiple.length === 1 ? 'argument' : 'arguments', matchedMultiple.length === 1 ? 'match was' : 'matches were')));
+          console.log(chalk.red(util.format('The following %s matched a dataset more than once; the first match was imported, the following %s not imported:', matchedMultiple.length === 1 ? 'argument' : 'arguments', matchedMultiple.length === 1 ? 'match was' : 'matches were')));
           console.log(matchedMultiple.map(function(d) {
             return ' - ' + formatDataset(d);
           }).join('\n'));
