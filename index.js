@@ -66,7 +66,7 @@ var formatError = function(err, body) {
     }).join('\n');
   }
 
-  return chalk.gray(details || indent + JSON.stringify(message.message))
+  return chalk.gray(details || indent + JSON.stringify(message.message));
 };
 
 var readDatasetFile = H.wrapCallback(function(d, callback) {
