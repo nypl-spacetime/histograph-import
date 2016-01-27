@@ -1,6 +1,6 @@
 {
   "name": "histograph-import",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Imports data into Histograph",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "aws-sdk": "^2.2.11",
     "chalk": "^1.1.1",
     "highland": "^2.5.1",
-    "histograph-config": "git+https://github.com/histograph/config#v0.5.0",
+    "histograph-config": "git+https://github.com/histograph/config#v0.5.1",
     "minimist": "^1.2.0",
     "request": "^2.65.0"
   },
