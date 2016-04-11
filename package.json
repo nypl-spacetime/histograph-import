@@ -7,7 +7,7 @@
     "test": "standard"
   },
   "bin": {
-    "histograph-import": "index.js"
+    "spacetime-import": "index.js"
   },
   "repository": {
     "type": "git",
