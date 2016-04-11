@@ -1,32 +1,32 @@
-var util = require('util');
-var url = require('url');
-var request = require('request');
-var config = require('histograph-config');
+var util = require('util')
+var url = require('url')
+var request = require('request')
+var config = require('spacetime-config')
 
-var apiUrl = function(path) {
-  var urlObj = url.parse(config.api.baseUrl);
-  urlObj.auth = config.api.admin.name + ':' + config.api.admin.password;
-  urlObj.pathname = path;
-  return url.format(urlObj);
-};
+var apiUrl = function (path) {
+  var urlObj = url.parse(config.api.baseUrl)
+  urlObj.auth = config.api.admin.name + ':' + config.api.admin.password
+  urlObj.pathname = path
+  return url.format(urlObj)
+}
 
-module.exports.createDataset = function(dataset, callback) {
+module.exports.createDataset = function (dataset, callback) {
   request(apiUrl('datasets'), {
     method: 'POST',
     headers: {
       'content-type': 'application/json'
     },
     body: JSON.stringify(dataset)
-  }, callback);
-};
+  }, callback)
+}
 
-module.exports.deleteDataset = function(datasetId, callback) {
+module.exports.deleteDataset = function (datasetId, callback) {
   request(apiUrl('datasets/' + datasetId), {
     method: 'DELETE'
-  }, callback);
-};
+  }, callback)
+}
 
-module.exports.uploadData = function(datasetId, type, readStream, size, force, callback) {
+module.exports.uploadData = function (datasetId, type, readStream, size, force, callback) {
   request.put(apiUrl('datasets/' + datasetId + '/' + type), {
     formData: {
       file: {
@@ -42,5 +42,5 @@ module.exports.uploadData = function(datasetId, type, readStream, size, force, c
       'content-type': 'application/x-ndjson',
       'x-histograph-force': force
     }
-  }, callback);
-};
+  }, callback)
+}

@@ -1,48 +1,33 @@
 {
-  "name": "histograph-import",
+  "name": "spacetime-import",
   "version": "0.5.1",
-  "description": "Imports data into Histograph",
+  "description": "Imports data into Space/Time Directory",
   "main": "index.js",
   "scripts": {
-    "test": "jshint *.js storage/*.js && jscs *.js storage/*.js"
+    "test": "standard"
   },
   "bin": {
     "histograph-import": "index.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/histograph/import.git"
+    "url": "https://github.com/nypl-spacetime/spacetime-import.git"
   },
   "author": "Bert Spaan",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/histograph/import/issues"
+    "url": "https://github.com/nypl-spacetime/spacetime-import/issues"
   },
-  "homepage": "https://github.com/histograph/import",
+  "homepage": "https://github.com/nypl-spacetime/spacetime-import",
   "dependencies": {
-    "async": "^0.9.0",
     "aws-sdk": "^2.2.11",
     "chalk": "^1.1.1",
     "highland": "^2.5.1",
-    "histograph-config": "git+https://github.com/histograph/config#v0.5.1",
+    "spacetime-config": "nypl-spacetime/spacetime-config",
     "minimist": "^1.2.0",
     "request": "^2.65.0"
   },
   "devDependencies": {
-    "jscs": "^1.10.0",
-    "jshint": "^2.6.0"
-  },
-  "jshintConfig": {
-    "node": true,
-    "globalstrict": false,
-    "undef": true,
-    "unused": true,
-    "noarg": true
-  },
-  "jscsConfig": {
-    "preset": "airbnb",
-    "requireCamelCaseOrUpperCaseIdentifiers": null,
-    "disallowMultipleVarDecl": true,
-    "requireMultipleVarDecl": null
+    "standard": "^6.0.8"
   }
 }
