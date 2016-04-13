@@ -121,29 +121,32 @@ var deleteDataset = function (d, callback) {
 
 var uploadData = function (d, type, callback) {
   var filename = getFilename(d.id, type)
+
   storage[d.type].size(d, filename, function (err, size) {
     if (err) {
-      console.error(err)
+      if (err.code && err.code === 'ENOENT') {
+        console.log(chalk.gray('  File not found: ' + chalk.stripColor(formatDataset(d, filename))))
+        callback()
+      } else {
+        callback(err)
+
+      }
+
       return
     }
 
-    if (size) {
-      var force = argv.force
-      var readStream = storage[d.type].createReadStream(d, filename)
-      apiClient.uploadData(d.id, type, readStream, size, force, function (err, res, body) {
-        if (res && res.statusCode === 200) {
-          console.log(chalk.green('  Upload successful: ') + formatDataset(d, filename))
-          callback(null, d)
-        } else {
-          console.error(chalk.red('  Upload failed: ') + formatDataset(d, filename))
-          console.log(formatError(err, body))
-          callback()
-        }
-      })
-    } else {
-      console.log(chalk.gray('  File not found: ' + chalk.stripColor(formatDataset(d, filename))))
-      callback()
-    }
+    var force = argv.force
+    var readStream = storage[d.type].createReadStream(d, filename)
+    apiClient.uploadData(d.id, type, readStream, size, force, function (err, res, body) {
+      if (res && res.statusCode === 200) {
+        console.log(chalk.green('  Upload successful: ') + formatDataset(d, filename))
+        callback(null, d)
+      } else {
+        console.error(chalk.red('  Upload failed: ') + formatDataset(d, filename))
+        console.log(formatError(err, body))
+        callback()
+      }
+    })
   })
 }
 

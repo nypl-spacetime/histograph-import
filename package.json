@@ -1,6 +1,6 @@
 {
   "name": "spacetime-import",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Imports data into Space/Time Directory",
   "main": "index.js",
   "scripts": {
